@@ -102,7 +102,8 @@ Bedah langkah-langkah di dalam fungsi `scheduler_handler`:
 * Ini adalah bukti bahwa simulasi CPU Time-Sharing berhasil dilakukan.
 
 ### Note
-Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
+* Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
+
 
 ## 📊 Analisis Output & Validasi
 
