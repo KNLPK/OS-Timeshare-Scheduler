@@ -104,3 +104,48 @@ Bedah langkah-langkah di dalam fungsi `scheduler_handler`:
 ### Note
 Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
 
+## 📊 Analisis Output & Validasi
+
+Jika Anda melihat output yang berjalan terus-menerus seperti di bawah ini, **JANGAN PANIK**. Itu artinya program **BERHASIL** mensimulasikan penjadwalan sistem operasi.
+
+### 1. Bukti Mekanisme Pre-emption Berfungsi
+Output tersebut menunjukkan urutan logika penjadwalan yang sempurna:
+
+1.  **Interupsi Timer:**
+    > `[SCHEDULER] Time Slice Habis.`
+    * Ini bukti bahwa `setitimer` bekerja. Sinyal `SIGALRM` dikirim ke proses induk tepat waktu.
+2.  **Context Switch (STOP):**
+    > `Menghentikan PID 2747`
+    * Scheduler mengambil alih kendali dan "membekukan" proses yang sedang berjalan menggunakan `SIGSTOP`.
+3.  **Context Switch (CONT):**
+    > `Memberikan CPU ke PID 2748`
+    * Scheduler memilih proses antrian berikutnya (Round Robin) dan melanjutkannya menggunakan `SIGCONT`.
+4.  **Eksekusi Proses:**
+    > `Process PID 2748 | Status: Running`
+    * Proses anak kembali bekerja memakan resource CPU hingga timer habis lagi.
+
+### 2. Mengapa Program Tidak Berhenti (Looping)?
+Anda mungkin bertanya, *"Kenapa programnya tidak berhenti-berhenti?"*
+
+* **Tujuan Tugas:** Kita mensimulasikan CPU Scheduler. Sebuah Sistem Operasi (OS) tidak boleh berhenti; ia harus selalu siap menjadwalkan proses selama komputer menyala.
+* **Logika Kode:** Fungsi `dummy_task()` dirancang sebagai *infinite loop* (`while(1)`), dan scheduler juga menunggu sinyal dalam *infinite loop*.
+* **Kesimpulan:** Loop tanpa henti ini adalah indikator bahwa **timer interval (setitimer) tersetting dengan benar** karena terus-menerus memicu perpindahan proses secara berkala.
+
+Untuk menghentikan program, cukup tekan **`Ctrl + C`** pada terminal.
+
+### Contoh Output yang Valid
+```text
+[SCHEDULER] Time Slice Habis. Menghentikan PID 2747
+[SCHEDULER] Memberikan CPU ke PID 2748
+Process PID 2748 | Status: Running
+Process PID 2748 | Status: Running
+
+[SCHEDULER] Time Slice Habis. Menghentikan PID 2748
+[SCHEDULER] Memberikan CPU ke PID 2746
+Process PID 2746 | Status: Running
+Process PID 2746 | Status: Running
+
+[SCHEDULER] Time Slice Habis. Menghentikan PID 2746
+[SCHEDULER] Memberikan CPU ke PID 2747
+Process PID 2747 | Status: Running
+... (berulang seterusnya)
