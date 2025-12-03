@@ -1,80 +1,102 @@
-OS-Timeshare-Scheduler
+# 🕒 OS Time-Share Scheduler Project
 
-Simulasi penjadwalan time-sharing Round Robin pre-emptive menggunakan C, sinyal (SIGALRM, SIGSTOP, SIGCONT), dan timer (setitimer). Mata Kuliah: COMP6697 Operating System.
+**Topik:** Simulasi penjadwalan time-sharing *Round Robin pre-emptive* menggunakan Bahasa C.  
+**Konsep Utama:** Sinyal (`SIGALRM`, `SIGSTOP`, `SIGCONT`) dan Timer (`setitimer`).
 
-⚙️ Persiapan Lingkungan (Menggunakan Windows Subsystem for Linux - WSL2)
+---
 
-Karena kode ini memerlukan fitur OS bergaya UNIX (seperti fork(), signal(), dan setitimer()), kita harus bekerja di lingkungan Linux.
+## ⚙️ Persiapan Lingkungan (Windows Subsystem for Linux - WSL2)
 
-Tahap 1: Instalasi WSL2 (Hanya untuk Pengguna Windows)
+Kode ini menggunakan fitur spesifik OS bergaya UNIX (Linux). Pengguna Windows **wajib** menggunakan WSL2 (Ubuntu).
 
-Buka Command Prompt (CMD) atau PowerShell
+### Tahap 1: Instalasi WSL2
+*(Lewati jika sudah memiliki terminal Ubuntu/Linux)*
 
-Jalankan sebagai Administrator (klik kanan > Run as administrator).
+1.  Buka **Command Prompt (CMD)** atau **PowerShell**.
+2.  Jalankan sebagai Administrator (Klik kanan > *Run as administrator*).
+3.  Ketik perintah berikut dan tekan Enter:
+    ```powershell
+    wsl --install
+    ```
+4.  **Restart Komputer Anda**.
+5.  Setelah restart, terminal akan terbuka otomatis. Buat **Username** dan **Password** Linux Anda.
 
-Jalankan perintah instalasi otomatis:
+### Tahap 2: Instalasi Compiler C (GCC)
+Setelah berhasil masuk ke terminal Ubuntu (WSL), lakukan instalasi *tools* yang dibutuhkan:
 
-wsl --install
+1.  **Perbarui Daftar Paket:**
+    ```bash
+    sudo apt update
+    ```
+2.  **Instal Tools Development Esensial (termasuk GCC):**
+    ```bash
+    sudo apt install build-essential
+    ```
+3.  **Verifikasi Instalasi:**
+    Pastikan GCC sudah terinstal dengan benar:
+    ```bash
+    gcc --version
+    ```
 
+---
 
-Perintah ini akan mengaktifkan fitur yang diperlukan, mengunduh kernel Linux, dan menginstal distribusi Ubuntu secara default.
+## 💻 Implementasi dan Kompilasi
 
-Jika diminta, Restart Komputer Anda.
+### Tahap 3: Menyiapkan Proyek
+Lakukan perintah berikut di terminal Anda untuk membuat folder kerja:
 
-Setelah restart, aplikasi Ubuntu akan terbuka. Ikuti petunjuk untuk membuat Username dan Password Linux Anda.
+1.  **Pindah ke Home Directory dan Buat Folder:**
+    ```bash
+    cd ~
+    mkdir aol_timeshare_project
+    cd aol_timeshare_project
+    ```
 
-Tahap 2: Instalasi Compiler C (GCC) di WSL
+2.  **Buat File Source Code:**
+    Buat file bernama `scheduler.c` dan buka text editor (misalnya `nano`):
+    ```bash
+    nano scheduler.c
+    ```
+    *(Paste kode C Anda di sini, lalu simpan dengan `Ctrl+O`, Enter, dan keluar dengan `Ctrl+X`)*.
 
-Setelah Anda berhasil masuk ke terminal Ubuntu (WSL):
+### Tahap 4: Kompilasi dan Eksekusi
 
-Perbarui Daftar Paket:
+1.  **Kompilasi Kode:**
+    Ubah kode C menjadi program yang bisa dijalankan (`executable` bernama `scheduler`):
+    ```bash
+    gcc scheduler.c -o scheduler
+    ```
 
-sudo apt update
+2.  **Jalankan Program:**
+    Mulai simulasi penjadwalan:
+    ```bash
+    ./scheduler
+    ```
 
+---
 
-(Masukkan password Linux Anda saat diminta.)
+## 🎯 Panduan Penjelasan Video (Bobot Nilai: 30%)
 
-Instal Tools Development Esensial (GCC):
+Rekan tim yang bertugas membuat video harus menjelaskan poin-poin teknis berikut dalam durasi **5-10 menit**:
 
-sudo apt install build-essential
+### 1. Mekanisme Interupsi Timer ⏱️
+* Jelaskan fungsi `setitimer(ITIMER_REAL, ...)` yang ada di fungsi `main`.
+* Jelaskan bahwa fungsi ini mengatur interval waktu (misalnya **200ms**).
+* Fungsi ini secara otomatis mengirimkan sinyal **`SIGALRM`** ke proses induk. Ini adalah simulasi dari *Hardware Clock Interrupt* pada OS nyata.
 
+### 2. Peran Penjadwal (Scheduler) 👮
+* Jelaskan bahwa **Proses Induk** bertindak sebagai *Scheduler*.
+* Scheduler hanya aktif "bangun" ketika menerima sinyal `SIGALRM`.
+* Tunjukkan bagian kode: `while(1) { pause(); }` yang menunggu sinyal tersebut.
 
-Paket ini mencakup GNU Compiler Collection (GCC) yang akan kita gunakan untuk mengkompilasi kode C.
+### 3. Logika Context Switch 🔄
+Bedah langkah-langkah di dalam fungsi `scheduler_handler`:
+* **`kill(pid, SIGSTOP)`**: Menghentikan sementara proses anak yang sedang berjalan. Ini disebut *Pre-emption*.
+* **`current_process_index = (index + 1) % NUM_CHILDREN;`**: Rumus matematika untuk algoritma *Round Robin* (berputar kembali ke 0 setelah mencapai batas).
+* **`kill(pid, SIGCONT)`**: Melanjutkan eksekusi proses anak berikutnya dalam antrian.
 
-Verifikasi Instalasi:
-
-gcc --version
-
-
-Pastikan versi GCC muncul. Lingkungan Anda sekarang siap.
-
-💻 Implementasi dan Kompilasi
-
-Tahap 3: Menyiapkan Proyek dan Kode
-
-Pindah ke Home Directory dan Buat Folder Proyek:
-
-cd ~
-mkdir aol_timeshare_project
-cd aol_timeshare_project
-
-
-Buat File Kode:
-Buat file scheduler.c dan masukkan semua kode yang telah disediakan (kode C yang sudah disiapkan).
-
-nano scheduler.c
-# (Copy-Paste kode C ke editor nano, lalu simpan dengan Ctrl+O, Enter, Ctrl+X)
-
-
-Tahap 4: Kompilasi dan Eksekusi
-
-Kompilasi Kode:
-
-gcc scheduler.c -o scheduler
-
-
-Perintah ini membuat file executable bernama scheduler.
-
-Jalankan Program:
-
-./scheduler
+### 4. Demonstrasi Output 📺
+* Tunjukkan terminal saat program berjalan.
+* Buktikan bahwa output PID berubah-ubah secara berurutan.
+    * *Contoh:* Proses 2746 berjalan -> Proses 2747 berjalan -> Proses 2748 berjalan -> Kembali ke 2746.
+* Ini adalah bukti bahwa simulasi CPU Time-Sharing berhasil dilakukan.
