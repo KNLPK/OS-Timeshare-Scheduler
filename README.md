@@ -10,7 +10,6 @@
 Kode ini menggunakan fitur spesifik OS bergaya UNIX (Linux). Pengguna Windows **wajib** menggunakan WSL2 (Ubuntu).
 
 ### Tahap 1: Instalasi WSL2
-*(Lewati jika sudah memiliki terminal Ubuntu/Linux)*
 
 1.  Buka **Command Prompt (CMD)** atau **PowerShell**.
 2.  Jalankan sebagai Administrator (Klik kanan > *Run as administrator*).
@@ -19,7 +18,7 @@ Kode ini menggunakan fitur spesifik OS bergaya UNIX (Linux). Pengguna Windows **
     wsl --install
     ```
 4.  **Restart Komputer Anda**.
-5.  Setelah restart, terminal akan terbuka otomatis. Buat **Username** dan **Password** Linux Anda.
+5.  Setelah restart, terminal akan terbuka otomatis. Buat **Username** dan **Password** Linux Anda(Diingat).
 
 ### Tahap 2: Instalasi Compiler C (GCC)
 Setelah berhasil masuk ke terminal Ubuntu (WSL), lakukan instalasi *tools* yang dibutuhkan:
@@ -51,13 +50,14 @@ Lakukan perintah berikut di terminal Anda untuk membuat folder kerja:
     mkdir aol_timeshare_project
     cd aol_timeshare_project
     ```
-
-2.  **Buat File Source Code:**
-    Buat file bernama `scheduler.c` dan buka text editor (misalnya `nano`):
+    Nama Project nya bebas apa saja, ini nama untuk project os nanti.
+    
+3.  **Buat File Source Code:**
+    Buat file bernama `scheduler.c` dan buka text editor (VSC):
     ```bash
-    nano scheduler.c
+    code scheduler.c
     ```
-    *(Paste kode C Anda di sini, lalu simpan dengan `Ctrl+O`, Enter, dan keluar dengan `Ctrl+X`)*.
+    *(Paste kode C scheduler.c nya)*.
 
 ### Tahap 4: Kompilasi dan Eksekusi
 
@@ -75,14 +75,14 @@ Lakukan perintah berikut di terminal Anda untuk membuat folder kerja:
 
 ---
 
-## 🎯 Panduan Penjelasan Video (Bobot Nilai: 30%)
+## 🎯 Panduan Penjelasan Video 
 
-Rekan tim yang bertugas membuat video harus menjelaskan poin-poin teknis berikut dalam durasi **5-10 menit**:
+Video harus menjelaskan poin-poin teknis berikut dalam durasi **5-10 menit**:
 
 ### 1. Mekanisme Interupsi Timer ⏱️
 * Jelaskan fungsi `setitimer(ITIMER_REAL, ...)` yang ada di fungsi `main`.
 * Jelaskan bahwa fungsi ini mengatur interval waktu (misalnya **200ms**).
-* Fungsi ini secara otomatis mengirimkan sinyal **`SIGALRM`** ke proses induk. Ini adalah simulasi dari *Hardware Clock Interrupt* pada OS nyata.
+* Fungsi ini secara otomatis mengirimkan sinyal **`SIGALRM`** ke proses induk. Ini adalah simulasi dari *Hardware Clock Interrupt* pada OS.
 
 ### 2. Peran Penjadwal (Scheduler) 👮
 * Jelaskan bahwa **Proses Induk** bertindak sebagai *Scheduler*.
@@ -100,3 +100,7 @@ Bedah langkah-langkah di dalam fungsi `scheduler_handler`:
 * Buktikan bahwa output PID berubah-ubah secara berurutan.
     * *Contoh:* Proses 2746 berjalan -> Proses 2747 berjalan -> Proses 2748 berjalan -> Kembali ke 2746.
 * Ini adalah bukti bahwa simulasi CPU Time-Sharing berhasil dilakukan.
+
+### Note
+Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
+
