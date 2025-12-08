@@ -7,45 +7,60 @@
 
 ## ⚙️ Persiapan Lingkungan (Oracle VirtualBox + Ubuntu)
 
-Proyek ini **wajib** dijalankan di lingkungan Linux murni menggunakan Virtual Machine untuk simulasi isolasi hardware yang akurat (sesuai standar mata kuliah OS).
+Proyek ini **wajib** dijalankan di lingkungan Linux murni menggunakan Virtual Machine untuk simulasi isolasi hardware.
 
-### Tahap 1: Persiapan Bahan & Instalasi VirtualBox
-Sebelum memulai, unduh dua file berikut di OS utama (Windows/Mac):
-1.  **Oracle VM VirtualBox:** [Download di sini](https://www.virtualbox.org/).
-2.  **Ubuntu Desktop ISO (24.04 LTS):** [Download di sini](https://ubuntu.com/download/desktop).
+### Tahap 1: Membuat Mesin Virtual (VirtualBox)
 
-**Langkah Instalasi:**
-1.  Install **Oracle VirtualBox** seperti biasa.
-2.  Buka VirtualBox, klik **New**.
-3.  **Name:** `Ubuntu_OS_Project`.
-4.  **ISO Image:** Pilih file `.iso` Ubuntu yang sudah diunduh.
-5.  **Hardware:** Alokasikan minimal **4096 MB (4GB) RAM** dan **2 CPU**.
-6.  **Hard Disk:** Alokasikan **25 GB**.
-7.  Selesaikan wizard, lalu klik **Start** untuk memulai instalasi Ubuntu (pilih *Erase disk and install Ubuntu*).
+Ikuti langkah detail ini agar konfigurasi sesuai standar tugas:
 
-### Tahap 2: Instalasi Compiler C (GCC)
-Setelah berhasil login ke dalam Desktop Ubuntu (di dalam VirtualBox), buka **Terminal** (`Ctrl + Alt + T`) dan jalankan perintah berikut untuk menyiapkan "bengkel" koding:
+1.  **Install & Buka VirtualBox**, lalu klik tombol **New** (ikon gerigi biru).
+2.  **Isi Konfigurasi Awal:**
+    * **Name:** `Ubuntu_OS_Project` (atau nama lain tanpa spasi).
+    * **ISO Image:** Pilih file `.iso` Ubuntu yang sudah diunduh.
+    * **PENTING:** Centang opsi **"Skip Unattended Installation"**. (Ini wajib agar kita bisa mengatur username/password secara manual).
+3.  **Alokasi Hardware (System):**
+    * **Base Memory:** Geser ke **4096 MB (4 GB)**. Jangan kurang, agar tidak *lag*.
+    * **Processors:** Geser ke **2 CPU**.
+4.  **Virtual Hard Disk:** Biarkan default atau set ke **25 GB**.
+5.  Klik **Finish**. Mesin virtual sudah terbuat.
 
-1.  **Perbarui Daftar Paket:**
+### Tahap 2: Instalasi Ubuntu (Di dalam VM)
+
+1.  Pilih mesin yang baru dibuat, lalu klik tombol **Start** (Panah Hijau).
+2.  Pilih opsi **"Try or Install Ubuntu"** menggunakan keyboard.
+3.  Ikuti panduan instalasi di layar:
+    * Pilih Bahasa English > Next.
+    * **Installation Type:** Pilih **"Erase disk and install Ubuntu"**.
+    * *Catatan:* Jangan panik. Opsi ini **hanya menghapus hardisk virtual** 25GB yang dibuat tadi. Data Windows/Laptop asli Anda **100% AMAN**.
+4.  Buat Username dan Password (pendek saja agar mudah diingat).
+5.  Tunggu instalasi selesai, lalu **Restart** mesin virtual.
+
+### Tahap 3: Persiapan Compiler (GCC)
+
+Setelah berhasil masuk ke Desktop Ubuntu, kita perlu menginstal "otak" untuk menjalankan kode C.
+
+1.  Buka **Terminal** (Tekan tombol `Ctrl` + `Alt` + `T` secara bersamaan).
+2.  Ketik perintah ini satu per satu (tekan Enter setiap baris):
+
     ```bash
+    # Update daftar aplikasi
     sudo apt update
-    ```
-2.  **Instal Tools Development Esensial:**
-    Ini akan menginstal GCC, G++, dan Make sekaligus.
-    ```bash
+
+    # Install paket lengkap untuk coding C (GCC, Make, dll)
     sudo apt install build-essential
     ```
-3.  **Verifikasi Instalasi:**
-    Pastikan compiler siap digunakan:
+
+3.  Cek apakah instalasi berhasil dengan mengetik:
     ```bash
     gcc --version
     ```
-
+    *Jika muncul versi gcc (misal: gcc 11.4.0), lingkungan siap digunakan.*
+    
 ---
 
 ## 💻 Implementasi dan Kompilasi
 
-### Tahap 3: Menyiapkan Proyek
+### Tahap 4: Menyiapkan Proyek
 Lakukan langkah ini di dalam Terminal Ubuntu:
 
 1.  **Buat Folder Kerja:**
@@ -64,35 +79,55 @@ Lakukan langkah ini di dalam Terminal Ubuntu:
         ```
         (Paste kode di sini, lalu tekan `Ctrl+X`, `Y`, `Enter` untuk save).
 
-### Tahap 4: Kompilasi dan Eksekusi
 
-1.  **Kompilasi Kode:**
-    Ubah kode mentah C menjadi program *executable* (biner Linux):
+### Tahap 4: Menyiapkan Proyek (Coding)
+
+Kita akan membuat folder khusus dan file kode C di dalam lingkungan Linux.
+
+1.  **Buat Direktori Kerja:**
+    Di dalam Terminal Ubuntu, jalankan perintah ini baris per baris:
     ```bash
-    gcc scheduler.c -o scheduler
+    # Kembali ke folder awal (Home)
+    cd ~
+
+    # Buat folder baru bernama 'aol_timeshare_project'
+    mkdir aol_timeshare_project
+
+    # Masuk ke dalam folder tersebut
+    cd aol_timeshare_project
     ```
-    *Jika tidak muncul pesan error, berarti kompilasi sukses.*
 
-2.  **Jalankan Program:**
-    Mulai simulasi penjadwalan:
-    ```bash
-    ./scheduler
-    ```
+2.  **Buat File Source Code (`scheduler.c`):**
+    Anda memiliki dua opsi untuk membuat file ini. Pilih salah satu yang paling nyaman:
 
----
+    * **Opsi A: Menggunakan Terminal (Nano Editor) - Disarankan**
+        1.  Ketik perintah:
+            ```bash
+            nano scheduler.c
+            ```
+        2.  Layar akan berubah menjadi editor teks kosong.
+        3.  **Paste** kode C Anda di sini.
+            * *Tips:* Jika `Ctrl+V` tidak berfungsi, gunakan **Klik Kanan > Paste** atau tekan `Ctrl+Shift+V`.
+        4.  **Simpan & Keluar:**
+            * Tekan `Ctrl + O` lalu `Enter` (untuk Save).
+            * Tekan `Ctrl + X` (untuk Keluar).
 
-## ❓ Mengapa VirtualBox (VM)?
-Berbeda dengan WSL2 yang menggunakan kernel translasi, VirtualBox menyediakan:
-1.  **Isolasi Total:** Crash pada program OS ini tidak akan memengaruhi Windows utama.
-2.  **Simulasi Hardware Nyata:** Manajemen memori dan CPU scheduling berjalan di atas hardware virtual yang terdedikasi, bukan "meminjam" kernel Windows.
-
+    * **Opsi B: Menggunakan Tampilan Grafis (GUI)**
+        1.  Klik ikon **"Files"** (gambar laci) di menu Ubuntu.
+        2.  Buka folder `aol_timeshare_project`.
+        3.  Klik kanan di area kosong > **Open in Terminal**.
+        4.  Ketik `gedit scheduler.c` atau buka aplikasi **Text Editor** dari menu aplikasi.
+        5.  Paste kode Anda, lalu klik **Save** di pojok kanan atas.
+    
 ### Note
 * Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
+
+---
 
 
 ## 📊 Analisis Output & Validasi
 
-Jika Anda melihat output yang berjalan terus-menerus seperti di bawah ini, **JANGAN PANIK**. Itu artinya program **BERHASIL** mensimulasikan penjadwalan sistem operasi.
+Jika output yang berjalan terus-menerus seperti di bawah ini, **JANGAN PANIK**. Itu artinya program **BERHASIL** mensimulasikan penjadwalan sistem operasi.
 
 ### 1. Bukti Mekanisme Pre-emption Berfungsi
 Output tersebut menunjukkan urutan logika penjadwalan yang sempurna:
