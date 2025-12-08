@@ -60,28 +60,7 @@ Setelah berhasil masuk ke Desktop Ubuntu, kita perlu menginstal "otak" untuk men
 
 ## 💻 Implementasi dan Kompilasi
 
-### Tahap 4: Menyiapkan Proyek
-Lakukan langkah ini di dalam Terminal Ubuntu:
-
-1.  **Buat Folder Kerja:**
-    ```bash
-    cd ~
-    mkdir aol_timeshare_project
-    cd aol_timeshare_project
-    ```
-
-2.  **Buat File Source Code:**
-    Karena VS Code Windows tidak terhubung langsung ke VirtualBox, gunakan Text Editor bawaan Ubuntu atau `nano`.
-    * **Opsi GUI:** Buka aplikasi "Text Editor" di Ubuntu, paste kode, simpan sebagai `scheduler.c` di folder tadi.
-    * **Opsi Terminal:**
-        ```bash
-        nano scheduler.c
-        ```
-        (Paste kode di sini, lalu tekan `Ctrl+X`, `Y`, `Enter` untuk save).
-
-
 ### Tahap 4: Menyiapkan Proyek (Coding)
-
 Kita akan membuat folder khusus dan file kode C di dalam lingkungan Linux.
 
 1.  **Buat Direktori Kerja:**
