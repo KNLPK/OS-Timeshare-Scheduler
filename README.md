@@ -1,38 +1,42 @@
 # 🕒 OS Time-Share Scheduler Project
 
-**Topik:** Simulasi penjadwalan time-sharing *Round Robin pre-emptive* menggunakan Bahasa C.  
-**Konsep Utama:** Sinyal (`SIGALRM`, `SIGSTOP`, `SIGCONT`) dan Timer (`setitimer`).
+**Topik:** Simulasi penjadwalan time-sharing *Round Robin pre-emptive* menggunakan Bahasa C.
+**Konsep Utama:** Sinyal (`SIGALRM`, `SIGSTOP`, `SIGCONT`), Timer (`setitimer`), dan Isolasi Hardware (Virtualization).
 
 ---
 
-## ⚙️ Persiapan Lingkungan (Windows Subsystem for Linux - WSL2)
+## ⚙️ Persiapan Lingkungan (Oracle VirtualBox + Ubuntu)
 
-Kode ini menggunakan fitur spesifik OS bergaya UNIX (Linux). Pengguna Windows **wajib** menggunakan WSL2 (Ubuntu).
+Proyek ini **wajib** dijalankan di lingkungan Linux murni menggunakan Virtual Machine untuk simulasi isolasi hardware yang akurat (sesuai standar mata kuliah OS).
 
-### Tahap 1: Instalasi WSL2
+### Tahap 1: Persiapan Bahan & Instalasi VirtualBox
+Sebelum memulai, unduh dua file berikut di OS utama (Windows/Mac):
+1.  **Oracle VM VirtualBox:** [Download di sini](https://www.virtualbox.org/).
+2.  **Ubuntu Desktop ISO (24.04 LTS):** [Download di sini](https://ubuntu.com/download/desktop).
 
-1.  Buka **Command Prompt (CMD)** atau **PowerShell**.
-2.  Jalankan sebagai Administrator (Klik kanan > *Run as administrator*).
-3.  Ketik perintah berikut dan tekan Enter:
-    ```powershell
-    wsl --install
-    ```
-4.  **Restart Komputer Anda**.
-5.  Setelah restart, terminal akan terbuka otomatis. Buat **Username** dan **Password** Linux Anda(Diingat).
+**Langkah Instalasi:**
+1.  Install **Oracle VirtualBox** seperti biasa.
+2.  Buka VirtualBox, klik **New**.
+3.  **Name:** `Ubuntu_OS_Project`.
+4.  **ISO Image:** Pilih file `.iso` Ubuntu yang sudah diunduh.
+5.  **Hardware:** Alokasikan minimal **4096 MB (4GB) RAM** dan **2 CPU**.
+6.  **Hard Disk:** Alokasikan **25 GB**.
+7.  Selesaikan wizard, lalu klik **Start** untuk memulai instalasi Ubuntu (pilih *Erase disk and install Ubuntu*).
 
 ### Tahap 2: Instalasi Compiler C (GCC)
-Setelah berhasil masuk ke terminal Ubuntu (WSL), lakukan instalasi *tools* yang dibutuhkan:
+Setelah berhasil login ke dalam Desktop Ubuntu (di dalam VirtualBox), buka **Terminal** (`Ctrl + Alt + T`) dan jalankan perintah berikut untuk menyiapkan "bengkel" koding:
 
 1.  **Perbarui Daftar Paket:**
     ```bash
     sudo apt update
     ```
-2.  **Instal Tools Development Esensial (termasuk GCC):**
+2.  **Instal Tools Development Esensial:**
+    Ini akan menginstal GCC, G++, dan Make sekaligus.
     ```bash
     sudo apt install build-essential
     ```
 3.  **Verifikasi Instalasi:**
-    Pastikan GCC sudah terinstal dengan benar:
+    Pastikan compiler siap digunakan:
     ```bash
     gcc --version
     ```
@@ -42,30 +46,32 @@ Setelah berhasil masuk ke terminal Ubuntu (WSL), lakukan instalasi *tools* yang 
 ## 💻 Implementasi dan Kompilasi
 
 ### Tahap 3: Menyiapkan Proyek
-Lakukan perintah berikut di terminal Anda untuk membuat folder kerja:
+Lakukan langkah ini di dalam Terminal Ubuntu:
 
-1.  **Pindah ke Home Directory dan Buat Folder:**
+1.  **Buat Folder Kerja:**
     ```bash
     cd ~
     mkdir aol_timeshare_project
     cd aol_timeshare_project
     ```
-    Nama Project nya bebas apa saja, ini nama untuk project os nanti.
-    
-3.  **Buat File Source Code:**
-    Buat file bernama `scheduler.c` dan buka text editor (VSC):
-    ```bash
-    code scheduler.c
-    ```
-    *(Paste kode C scheduler.c nya)*.
+
+2.  **Buat File Source Code:**
+    Karena VS Code Windows tidak terhubung langsung ke VirtualBox, gunakan Text Editor bawaan Ubuntu atau `nano`.
+    * **Opsi GUI:** Buka aplikasi "Text Editor" di Ubuntu, paste kode, simpan sebagai `scheduler.c` di folder tadi.
+    * **Opsi Terminal:**
+        ```bash
+        nano scheduler.c
+        ```
+        (Paste kode di sini, lalu tekan `Ctrl+X`, `Y`, `Enter` untuk save).
 
 ### Tahap 4: Kompilasi dan Eksekusi
 
 1.  **Kompilasi Kode:**
-    Ubah kode C menjadi program yang bisa dijalankan (`executable` bernama `scheduler`):
+    Ubah kode mentah C menjadi program *executable* (biner Linux):
     ```bash
     gcc scheduler.c -o scheduler
     ```
+    *Jika tidak muncul pesan error, berarti kompilasi sukses.*
 
 2.  **Jalankan Program:**
     Mulai simulasi penjadwalan:
@@ -75,31 +81,10 @@ Lakukan perintah berikut di terminal Anda untuk membuat folder kerja:
 
 ---
 
-## 🎯 Panduan Penjelasan Video 
-
-Video harus menjelaskan poin-poin teknis berikut dalam durasi **5-10 menit**:
-
-### 1. Mekanisme Interupsi Timer ⏱️
-* Jelaskan fungsi `setitimer(ITIMER_REAL, ...)` yang ada di fungsi `main`.
-* Jelaskan bahwa fungsi ini mengatur interval waktu (misalnya **200ms**).
-* Fungsi ini secara otomatis mengirimkan sinyal **`SIGALRM`** ke proses induk. Ini adalah simulasi dari *Hardware Clock Interrupt* pada OS.
-
-### 2. Peran Penjadwal (Scheduler) 👮
-* Jelaskan bahwa **Proses Induk** bertindak sebagai *Scheduler*.
-* Scheduler hanya aktif "bangun" ketika menerima sinyal `SIGALRM`.
-* Tunjukkan bagian kode: `while(1) { pause(); }` yang menunggu sinyal tersebut.
-
-### 3. Logika Context Switch 🔄
-Bedah langkah-langkah di dalam fungsi `scheduler_handler`:
-* **`kill(pid, SIGSTOP)`**: Menghentikan sementara proses anak yang sedang berjalan. Ini disebut *Pre-emption*.
-* **`current_process_index = (index + 1) % NUM_CHILDREN;`**: Rumus matematika untuk algoritma *Round Robin* (berputar kembali ke 0 setelah mencapai batas).
-* **`kill(pid, SIGCONT)`**: Melanjutkan eksekusi proses anak berikutnya dalam antrian.
-
-### 4. Demonstrasi Output 📺
-* Tunjukkan terminal saat program berjalan.
-* Buktikan bahwa output PID berubah-ubah secara berurutan.
-    * *Contoh:* Proses 2746 berjalan -> Proses 2747 berjalan -> Proses 2748 berjalan -> Kembali ke 2746.
-* Ini adalah bukti bahwa simulasi CPU Time-Sharing berhasil dilakukan.
+## ❓ Mengapa VirtualBox (VM)?
+Berbeda dengan WSL2 yang menggunakan kernel translasi, VirtualBox menyediakan:
+1.  **Isolasi Total:** Crash pada program OS ini tidak akan memengaruhi Windows utama.
+2.  **Simulasi Hardware Nyata:** Manajemen memori dan CPU scheduling berjalan di atas hardware virtual yang terdedikasi, bukan "meminjam" kernel Windows.
 
 ### Note
 * Untuk Panduan per masing masing baris code nya ada di file 'panduan.c'.
